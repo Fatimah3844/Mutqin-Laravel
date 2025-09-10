@@ -8,7 +8,7 @@ Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 Route::middleware([
-    'web', // لو session/cookies مستخدمة
+    'web', // 
     EnsureFrontendRequestsAreStateful::class,
     'auth:sanctum'
 ])->group(function () {
