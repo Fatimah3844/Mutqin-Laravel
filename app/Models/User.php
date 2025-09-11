@@ -15,7 +15,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = ['name', 'email', 'password', 'role', 'google_id'];
+    protected $fillable = ['username', 'email', 'password', 'role', 'google_id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -40,7 +40,7 @@ class User extends Authenticatable
         ];
     }
 
-    // ================== العلاقات ==================
+    // ==================relations=================
 
     public function sessions()
     {
