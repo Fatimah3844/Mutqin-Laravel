@@ -57,13 +57,11 @@ return response()->json([
 {
     $validated = $request->validate(['student_id' => 'required|integer']);
 
-    // احسب عدد الجلسات اللي حضرها الطالب
     $sessionsAttended = LearningSession::whereHas('students', function($q) use ($validated) {
         $q->where('student_id', $validated['student_id'])
           ->where('attended', true);
     })->count();
 
-    // لاحقاً تضيفي الـ quizzes والصفحات من جداولها
     return response()->json([
         'sessions_attended' => $sessionsAttended,
         'quizzes_completed' => 0, // Placeholder
