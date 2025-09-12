@@ -16,25 +16,30 @@ class AuthController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
+            'name'     => 'required|string|max:255',
+            'phone'    => 'nullable|string|max:20',
+            'email'    => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|string|in:student,sheikh,parent,admin',
+            'role'     => 'required|string|in:student,sheikh,parent,admin',
         ]);
 
         $user = User::create([
             'username' => $request->username,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'phone'    => $request->phone, 
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role'     => $request->role,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'message'      => 'User registered successfully.',
+            'user'         => $user,
             'access_token' => $token,
-            'token_type' => 'Bearer',
-        ]);
+            'token_type'   => 'Bearer',
+        ], 201);
     }
 
     // ================== Login (email/password) ==================
