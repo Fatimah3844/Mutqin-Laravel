@@ -31,7 +31,7 @@ Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 
-Route::middleware('auth:sanctum')->prefix('students')->group(function () {
+Route::middleware(['auth:sanctum', 'role:student'])->prefix('students')->group(function () {
     // Profile
     Route::put('/profile', [StudentController::class, 'updateProfile']);
     Route::delete('/profile', [StudentController::class, 'deleteProfile']);

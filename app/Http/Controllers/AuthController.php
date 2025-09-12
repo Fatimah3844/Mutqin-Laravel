@@ -86,27 +86,40 @@ class AuthController extends Controller
 
     // ================== Google OAuth Callback ==================
     public function handleGoogleCallback()
-    {
-        /** @var GoogleProvider $driver */
+{
+     /** @var GoogleProvider $driver */
         $driver = Socialite::driver('google');
         $googleUser = $driver->stateless()->user();
 
-        $user = User::firstOrCreate(
-            ['email' => $googleUser->email],
-            [
-                'name' => $googleUser->name,
-                'google_id' => $googleUser->id,
-                'password' => Hash::make(uniqid()),
-                'role' => 'student', // أو أي role افتراضي
-            ]
-        );
+    // default role
+    $defaultRole = 'student'; 
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+    // check if user have same email first
+    $user = User::where('email', $googleUser->email)->first();
 
-        return response()->json([
-            'user' => $user,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+    if ($user) {
+        
+        $role = $user->role;
+    } else {
+        
+        $user = User::create([
+            'username'   => $googleUser->name, 
+            'email'      => $googleUser->email,
+            'google_id'  => $googleUser->id,
+            'password'   => Hash::make(uniqid()),
+            'role'       => $defaultRole,
         ]);
+        $role = $defaultRole;
     }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'user' => $user,
+        'role' => $role, // from database
+        'access_token' => $token,
+        'token_type' => 'Bearer',
+    ]);
+}
+
 }

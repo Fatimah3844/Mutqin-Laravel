@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http;
+namespace App\Http;  
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -8,7 +8,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 class Kernel extends HttpKernel
 {
     protected $middleware = [
-        // global middleware هنا لو حابة
+        // global middleware
     ];
 
     protected $middlewareGroups = [
@@ -31,6 +31,6 @@ class Kernel extends HttpKernel
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        // أضيفي أي middleware تانية هنا
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }

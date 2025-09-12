@@ -54,24 +54,37 @@ return response()->json([
     }
     //still need computational logic(crud op) this is just for testing
     public function progress(Request $request)
-    {
-        return response()->json([
-            'sessions_attended' => 5,
-            'quizzes_completed' => 3,
-            'pages_learned' => 20,
-            'period' => $request->query('period', 'weekly')
-        ],200);
-    }
+{
+    $validated = $request->validate(['student_id' => 'required|integer']);
 
+    // احسب عدد الجلسات اللي حضرها الطالب
+    $sessionsAttended = LearningSession::whereHas('students', function($q) use ($validated) {
+        $q->where('student_id', $validated['student_id'])
+          ->where('attended', true);
+    })->count();
+
+    // لاحقاً تضيفي الـ quizzes والصفحات من جداولها
+    return response()->json([
+        'sessions_attended' => $sessionsAttended,
+        'quizzes_completed' => 0, // Placeholder
+        'pages_learned' => 0,     // Placeholder
+        'period' => $request->query('period', 'weekly'),
+    ], 200);
+}
     public function progressAll()
-    {
-        return response()->json([
-            [
-                'date' => now()->toISOString(),
-                'sessions_attended' => 5,
-                'quizzes_completed' => 3,
-                'pages_learned' => 20
-            ]
-        ],200);
-    }
+{
+    $sessions = LearningSession::with('students')->get();
+
+    $data = $sessions->map(function ($session) {
+        return [
+            'date' => $session->start_time,
+            'sessions_attended' => $session->students->where('pivot.attended', true)->count(),
+            'quizzes_completed' => 0, // Placeholder
+            'pages_learned' => 0      // Placeholder
+        ];
+    });
+
+    return response()->json($data, 200);
+}
+
 }
