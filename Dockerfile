@@ -45,7 +45,8 @@ COPY ./deploy/supervisord.conf /etc/supervisor.d/supervisord.ini
 # صلاحيات Laravel
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-EXPOSE 80
+EXPOSE 8080
+
 
 # شغّل Nginx وPHP-FPM معًا
 CMD ["supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
