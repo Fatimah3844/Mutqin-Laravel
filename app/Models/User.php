@@ -84,4 +84,5 @@ class User extends Authenticatable
     return $this->belongsToMany(Quiz::class, 'quiz_students', 'user_id', 'quiz_id');
 }
 
+
 }

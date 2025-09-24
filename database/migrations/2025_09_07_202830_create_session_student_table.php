@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('session_id')
                   ->constrained('learning_sessions')
-                  ->onDelete('cascade'); // رابط للجدول الرئيسي للجلسة
+                  ->onDelete('cascade'); 
             $table->foreignId('student_id')
                   ->constrained('users')
-                  ->onDelete('cascade'); // رابط للطالب
-            $table->boolean('attended')->default(false); // لتسجيل حضور الطالب
+                  ->onDelete('cascade'); 
+            $table->boolean('attended')->default(false); 
+           $table->integer('points')->default(0);
+           $table->integer('pages_learned')->default(0);
+
             $table->timestamps();
         });
     }
