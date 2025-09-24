@@ -1,27 +1,34 @@
-FROM php:8.2-fpm-alpine
+# استخدم صورة PHP مع Composer و Node (لو عندك Vite أو npm)
+FROM php:8.2-cli
 
-RUN apk add --no-cache \
-    git unzip curl nodejs npm bash \
-    libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev \
-    oniguruma-dev zip libzip-dev icu-dev nginx supervisor
+# تثبيت بعض المتطلبات الأساسية
+RUN apt-get update && apt-get install -y \
+    unzip \
+    git \
+    curl \
+    libzip-dev \
+    && docker-php-ext-install pdo_mysql zip
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install gd pdo pdo_mysql mbstring zip exif pcntl intl bcmath
-
+# تثبيت Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# إنشاء مجلد التطبيق
 WORKDIR /var/www
+
+# نسخ ملفات Laravel
 COPY . .
-RUN composer install --optimize-autoloader --no-dev \
-    && npm install && npm run build \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
 
-COPY ./deploy/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./deploy/supervisord.conf /etc/supervisor.d/supervisord.ini
+# تثبيت Dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# إعداد صلاحيات Laravel
+RUN chmod -R 775 storage bootstrap/cache
 
+# Laravel يشتغل على البورت اللي Render بيمرره
+ENV PORT=8080
+
+# إظهار البورت
 EXPOSE 8080
-CMD ["supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
+
+# تشغيل Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
