@@ -108,11 +108,12 @@ class AuthController extends Controller
     } else {
         
         $user = User::create([
-            'username'   => $googleUser->name, 
-            'email'      => $googleUser->email,
-            'google_id'  => $googleUser->id,
-            'password'   => Hash::make(uniqid()),
-            'role'       => $defaultRole,
+             'name'       => $googleUser->name ?? 'No Name',
+    'username'   => $googleUser->name ?? 'user' . rand(1000,9999), 
+    'email'      => $googleUser->email,
+    'google_id'  => $googleUser->id,
+    'password'   => Hash::make(uniqid()),
+    'role'       => $defaultRole,
         ]);
         $role = $defaultRole;
     }
