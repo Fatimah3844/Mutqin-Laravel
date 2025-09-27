@@ -36,12 +36,13 @@ class StudentController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
-return response()->json([
-    'id' => $user->id,
-    'username' => $user->username,
-    'email' => $user->email,
-    'role' => $user->role
-], 200);
+ return response()->json([
+        'user_id' => $user->id,
+        'email' => $user->email,
+        'username' => $user->username,
+        'name' => $user->name,
+        'phone' => $user->phone,
+    ], 200);
 
     }
 
